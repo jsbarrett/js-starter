@@ -31,8 +31,6 @@ const validateInput = ({ tableName, rest }) => {
 
 async function main () {
   if (process.argv.length > 2) {
-    console.log('doing fancy things for niner')
-
     const tableName = process.argv[2]
     const rest = process.argv.slice(3)
 
@@ -52,7 +50,7 @@ async function main () {
     await generateRoutes(tableName)
     await generateModel({ tableName, columns })
   } else {
-    console.log('doing fancy things for scrappy')
+    // run other terminal ui option
   }
 }
 
