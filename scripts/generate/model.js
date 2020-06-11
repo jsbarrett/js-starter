@@ -16,7 +16,7 @@ class ${properCaseName(tableName)}Model {
     return ${tableName}
   }
 
-  create = async (${commaSeperatedColNames(columns)}) => {
+  create = async ({ ${commaSeperatedColNames(columns)} }) => {
     const sql = 'INSERT INTO ${tableName} (${commaSeperatedColNames(columns)}) VALUES (${columns.map(x => '?').join(', ')})'
     const values = [${commaSeperatedColNames(columns)}]
     return runSQL({ sql, values })

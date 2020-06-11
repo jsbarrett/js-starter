@@ -1,10 +1,14 @@
+const listColumns = (columns) => {
+  return columns.map(x => `\${x.${x.name}}`).join(', ')
+}
+
 const allView = ({ tableName, columns }) => `const { baseHTML } = require('../baseHTML')
 
 const Item = x => {
   return \`
     <a href="/${tableName}/\${x.id}/edit">
       <li class="hover:bg-gray-100">
-        \${x.id}
+        \${x.id}, ${listColumns(columns)}
       </li>
     </a>
   \`
