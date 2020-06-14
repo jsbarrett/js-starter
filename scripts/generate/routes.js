@@ -1,20 +1,20 @@
-const fs = require('fs').promises
-const path = require('path')
-const routeDirectoryPath = path.resolve(__dirname, '../../routes')
+import * as path from 'https://deno.land/std/path/mod.ts'
+import { dirname } from 'https://raw.githubusercontent.com/rsp/deno-dirname/master/mod.ts'
+
+const routeDirectoryPath = path.resolve(dirname(import.meta), '../../routes/definitions')
 const generateRoutes = async (tableName) => {
-  const text = `const router = require('express').Router()
-const { ${tableName}Controller } = require('../controllers/${tableName}Controller')
+  const text = `import { router } from '../router.js'
+import { ${tableName}Controller } from '../../controllers/${tableName}Controller.js'
 
 router.get('/${tableName}', ${tableName}Controller.all)
 router.get('/${tableName}/new', ${tableName}Controller.new)
 router.post('/${tableName}/create', ${tableName}Controller.create)
 router.get('/${tableName}/:id/edit', ${tableName}Controller.edit)
 router.post('/${tableName}/:id/update', ${tableName}Controller.update)
-router.post('/${tableName}/:id/delete', ${tableName}Controller.delete)
+router.post('/${tableName}/:id/delete', ${tableName}Controller.delete)`
 
-module.exports = router`
   const newRoutePath = `${routeDirectoryPath}/${tableName}.js`
-  await fs.writeFile(newRoutePath, text)
+  await Deno.writeTextFile(newRoutePath, text)
 }
 
-module.exports = { generateRoutes }
+export { generateRoutes }

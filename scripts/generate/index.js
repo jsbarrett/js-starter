@@ -1,25 +1,25 @@
-const fs = require('fs').promises
-const path = require('path')
-const { generateViews } = require('./views')
-const { generateRoutes } = require('./routes')
-const { generateModel } = require('./model')
-const { generateController } = require('./controller')
-const { generateMigration } = require('./migration')
+// const fs = require('fs').promises
+// const path = require('path')
+// const { generateViews } = require('./views')
+import { generateRoutes } from './routes.js'
+// const { generateModel } = require('./model')
+// const { generateController } = require('./controller')
+// const { generateMigration } = require('./migration')
 
 // TODO: can definitely do a lot more validation here
 const validateInput = ({ tableName, rest }) => {
   rest.forEach(x => {
     if (x.split(':').length !== 3) {
       console.log('You are doing it wrong')
-      process.exit(1)
+      Deno.exit(1)
     }
   })
 }
 
 async function main () {
-  if (process.argv.length > 2) {
-    const tableName = process.argv[2]
-    const rest = process.argv.slice(3)
+  if (Deno.args.length > 0) {
+    const tableName = Deno.args[0]
+    const rest = Deno.args.slice(1)
 
     validateInput({ tableName, rest })
 
@@ -32,13 +32,14 @@ async function main () {
       }
     })
 
-    await generateMigration({ tableName, columns: rest })
-    await generateViews({ tableName, columns })
+    // await generateMigration({ tableName, columns: rest })
+    // await generateViews({ tableName, columns })
     await generateRoutes(tableName)
-    await generateModel({ tableName, columns })
-    await generateController({ tableName, columns })
+    // await generateModel({ tableName, columns })
+    // await generateController({ tableName, columns })
   } else {
     // run other terminal ui option
+    console.log('do other thing')
   }
 }
 

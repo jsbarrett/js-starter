@@ -1,12 +1,12 @@
-const fs = require('fs').promises
-const path = require('path')
+import * as path from 'https://deno.land/std/path/mod.ts'
+import { dirname } from 'https://raw.githubusercontent.com/rsp/deno-dirname/master/mod.ts'
 
 const properCaseName = name => name[0].toUpperCase() + name.slice(1)
 
 const commaSeperatedColNames = (columns) => columns.map(x => x.name).join(', ')
 
 const makeTemplate = (tableName, columns) => {
-    return `const { runSQL } = require('../db-connection')
+    return `import { runSQL } from '../db-connection'
 
 class ${properCaseName(tableName)}Model {
   all = async () => {
@@ -43,14 +43,14 @@ class ${properCaseName(tableName)}Model {
 
 const ${tableName}Model = new ${properCaseName(tableName)}Model()
 
-module.exports = { ${tableName}Model }`
+export { ${tableName}Model }`
 }
 
 const generateModel = async ({ tableName, columns }) => {
-  const modelsPath = path.resolve(__dirname, '../../models')
+  const modelsPath = path.resolve(dirname(import.meta), '../../models')
   const filePath = modelsPath + '/' + tableName + 'Model.js'
   const template = makeTemplate(tableName, columns)
-  await fs.writeFile(filePath, template)
+  await Deno.writeTextFile(filePath, template)
 }
 
-module.exports = { generateModel }
+export { generateModel }

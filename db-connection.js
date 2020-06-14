@@ -1,15 +1,16 @@
-const path = require('path')
-const sqlite3 = require('sqlite3').verbose()
-const db = new sqlite3.Database(path.resolve(__dirname, './db.sqlite'))
+import * as path from 'https://deno.land/std/path/mod.ts'
+import { DB } from "https://deno.land/x/sqlite/mod.ts";
+import { dirname } from 'https://raw.githubusercontent.com/rsp/deno-dirname/master/mod.ts'
 
-const runSQL = ({ sql, values }) => {
-  return new Promise((resolve, reject) => {
-    db.all(sql, values, (err, results) => {
-      if (err) return reject(err)
+const db = new DB(path.resolve(dirname(import.meta), './db.sqlite'))
 
-      resolve(results)
-    })
-  })
-}
+const runSQL = ({ sql, values }) => new Promise((resolve, reject) => {
+  try {
+    const results = db.query(sql, values)
+    resolve(results)
+  } catch (err) {
+    reject(err)
+  }
+})
 
-module.exports = { runSQL }
+export { runSQL }

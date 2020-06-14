@@ -13,7 +13,7 @@
 // app.listen(3000, () => { console.log('listening on port 3000') })
 
 import { serve } from 'https://deno.land/std/http/server.ts'
-import './routes/test-route.js'
+import './routes/index.js'
 import { start } from './routes/router.js'
 
 const server = serve({ port: 3000 })

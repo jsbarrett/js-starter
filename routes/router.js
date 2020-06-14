@@ -5,69 +5,45 @@ const routes = {
   }
   // "method" -> route
   // 'todos': {
-  //   ':id': {
+  //   '*': {
   //     'delete': () => {}
   //   }
   // }
 }
 
+const registerRoute = (method) => (url, cb) => {
+  const parts = url.split('/')
+  // ['', 'todos', ':id', 'delete']
+  const dynamicParts = parts
+    .filter(x => x[0] === ':')
+    .map(x => {
+      return {
+        string: x,
+        index: parts.indexOf(x)
+      }
+    })
+    // [{ string: 'id', index: 2 }]
+
+  const withoutFirstIndex = parts.slice(1)
+
+  let routesForMethod = routes[method]
+  let parent
+  let currKey
+  withoutFirstIndex.reduce((o, key) => {
+    currKey = (!dynamicParts.map(x => x.string).includes(key))
+      ? key
+      : '*'
+    parent = o
+    parent[currKey] = parent[currKey] || {}
+    return parent[currKey]
+  }, routesForMethod)
+
+  parent[currKey] = someFactoryFnToGetDynamicParts(cb, dynamicParts)
+}
+
 const router = {
-  get: (url, cb) => {
-    const parts = url.split('/')
-    // ['', 'todos', ':id', 'delete']
-    const dynamicParts = parts
-      .filter(x => x[0] === ':')
-      .map(x => {
-        return {
-          string: x,
-          index: parts.indexOf(x)
-        }
-      })
-      // [{ string: 'id', index: 2 }]
-
-    const withoutFirstIndex = parts.slice(1)
-
-    let $ref = routes['GET']
-    let $parent
-    let key
-
-    for (const el of withoutFirstIndex) {
-      key = (dynamicParts.map(x => x.string).indexOf(el) === -1) ? el : '*'
-      if (!$ref[key]) $ref[key] = {}
-      $parent = $ref
-      $ref = $ref[key]
-    }
-
-    console.log(dynamicParts)
-    $parent[key] = someFactoryFnToGetDynamicParts(cb, dynamicParts)
-    console.log($parent[key])
-  },
-  post: (url, cb) => {
-    const parts = url.split('/')
-    const dynamicParts = parts
-      .filter(x => x[0] === ':')
-      .map(x => {
-        return {
-          string: x,
-          index: parts.indexOf(x)
-        }
-      })
-
-    const withoutFirstIndex = parts.slice(1)
-
-    let $ref = routes['POST']
-    let $parent
-    let key
-
-    for (const el of withoutFirstIndex) {
-      key = (dynamicParts.map(x => x.string).indexOf(el) === -1) ? el : '*'
-      if (!$ref[key]) $ref[key] = {}
-      $parent = $ref
-      $ref = $ref[key]
-    }
-
-    $parent[key] = someFactoryFnToGetDynamicParts(cb, dynamicParts)
-  }
+  get: registerRoute('GET'),
+  post: registerRoute('POST')
 }
 
 const someFactoryFnToGetDynamicParts = function (cb, dynamicParts) {
@@ -106,9 +82,6 @@ const goGetRoutes = (req) => {
   let hasRouteHandler = false
   for (let i = 0; i < parts.length; i += 1) {
     const el = parts[i]
-
-    console.log($ref)
-    console.log(el)
     if ($ref[el]) {
       $ref = $ref[el]
     } else if ($ref['*']) {
