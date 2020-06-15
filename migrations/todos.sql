@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS todos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  name text ,
+  complete text NOT NULL
+)

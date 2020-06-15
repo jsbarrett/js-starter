@@ -1,19 +1,10 @@
 const routes = {
-  GET: {
-  },
-  POST: {
-  }
-  // "method" -> route
-  // 'todos': {
-  //   '*': {
-  //     'delete': () => {}
-  //   }
-  // }
+  GET: {},
+  POST: {}
 }
 
 const registerRoute = (method) => (url, cb) => {
   const parts = url.split('/')
-  // ['', 'todos', ':id', 'delete']
   const dynamicParts = parts
     .filter(x => x[0] === ':')
     .map(x => {
@@ -22,7 +13,6 @@ const registerRoute = (method) => (url, cb) => {
         index: parts.indexOf(x)
       }
     })
-    // [{ string: 'id', index: 2 }]
 
   const withoutFirstIndex = parts.slice(1)
 
@@ -47,38 +37,23 @@ const router = {
 }
 
 const someFactoryFnToGetDynamicParts = function (cb, dynamicParts) {
-  return function (req) {
-    const urlParts = req.url.split('/')
-    if (dynamicParts.length > 0) req.params = {}
+  return function (ctx) {
+    const urlParts = ctx.request.url.pathname.split('/')
+    if (dynamicParts.length > 0) ctx.request.params = {}
 
     for (let param of dynamicParts) {
       const name = param.string.slice(1)
-      req.params[name] = urlParts[param.index]
+      ctx.request.params[name] = urlParts[param.index]
     }
-    // req.params.id == '12392484'
 
-    return cb(req)
+    return cb(ctx)
   }
 }
 
-/**
- *
- * router.get('/todos/:id', function () {})
- * router.post('/todos/:id/update', function () {})
- * router.post('/todos/:id/delete', (req) => {
- *   req.params.id
- * })
- *
- *
- */
+const goGetRoutes = (ctx) => {
+  const parts = ctx.request.url.pathname.split('/').slice(1)
 
-const goGetRoutes = (req) => {
-  // const urlPath = req.url.cutoffeverythingafter?
-  const parts = req.url.split('/').slice(1)
-  // ['', 'todos', '4345']
-  // /todos/:id/update/foo/bar/anyother/stuff
-  // /todos/:foobar/update/foo/bar/anyother/stuff
-  let $ref = routes[req.method]
+  let $ref = routes[ctx.request.method]
   let hasRouteHandler = false
   for (let i = 0; i < parts.length; i += 1) {
     const el = parts[i]
@@ -94,20 +69,18 @@ const goGetRoutes = (req) => {
   }
 
   if (hasRouteHandler) {
-    $ref(req)
+    $ref(ctx)
   } else {
-    req.respond({ body: 'hello world' })
+    ctx.response.body = 'That route is not recognized'
   }
 }
 
-async function start (server) {
-  for await (const req of server) {
-    try {
-      goGetRoutes(req)
-    } catch (err) {
-      console.error(err)
-      req.respond({ body: 'we do not handle that method yet' })
-    }
+async function start (ctx) {
+  try {
+    goGetRoutes(ctx)
+  } catch (err) {
+    console.error(err)
+    req.respond({ body: 'there was a problem with the request' })
   }
 }
 
