@@ -1,5 +1,4 @@
 {
-  "exec": "deno test --allow-net --allow-read test.js",
   "events": {
     "start": "clear"
   }

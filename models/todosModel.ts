@@ -1,38 +1,38 @@
-const { runSQL } = require('../db-connection')
+import { runSQL } from '../db-connection.ts'
 
 class TodosModel {
   all = async () => {
     const sql = 'SELECT * FROM todos'
-    const values = []
+    const values: any = []
     const todos = await runSQL({ sql, values })
     return todos
   }
 
-  create = async ({ name, complete }) => {
+  create = async ({ name, complete }: any) => {
     const sql = 'INSERT INTO todos (name, complete) VALUES (?, ?)'
-    const values = [name, complete]
+    const values: any = [name, complete]
     return runSQL({ sql, values })
   }
 
-  delete = async (id) => {
+  delete = async (id: number|string) => {
     const sql = `DELETE FROM todos WHERE id = ?`
-    const values = [id]
+    const values: any = [id]
     return runSQL({ sql, values })
   }
 
-  get = async (id) => {
+  get = async (id: number|string) => {
     const sql = 'SELECT * FROM todos WHERE id = ?'
-    const values = [id]
-    return runSQL({ sql, values }).then(x => x[0])
+    const values: any = [id]
+    return runSQL({ sql, values }).then((x: any) => x[0])
   }
 
-  update = async (item) => {
+  update = async (item: any) => {
     const sql = `UPDATE todos SET name = ?, complete = ? WHERE id = ?`
-    const values = [item.name, item.complete, item.id]
+    const values: any = [item.name, item.complete, item.id]
     await runSQL({ sql, values })
   }
 }
 
 const todosModel = new TodosModel()
 
-module.exports = { todosModel }
+export { todosModel }

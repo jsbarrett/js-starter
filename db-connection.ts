@@ -4,7 +4,7 @@ import { dirname } from 'https://raw.githubusercontent.com/rsp/deno-dirname/mast
 
 const db = new DB(path.resolve(dirname(import.meta), './db.sqlite'))
 
-const runSQL = ({ sql, values }) => new Promise((resolve, reject) => {
+const runSQL = ({ sql, values }: any) => new Promise((resolve, reject) => {
   try {
     const results = db.query(sql, values)
     resolve(results)

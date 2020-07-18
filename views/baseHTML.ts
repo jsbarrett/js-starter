@@ -1,4 +1,4 @@
-const baseHTML = (content) => {
+const baseHTML = (content: any) => {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -16,4 +16,4 @@ const baseHTML = (content) => {
   `
 }
 
-module.exports = { baseHTML }
+export { baseHTML }

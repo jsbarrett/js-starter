@@ -1,6 +1,6 @@
-const { baseHTML } = require('../baseHTML')
+import { baseHTML } from '../baseHTML.ts'
 
-const Item = x => {
+const Item = (x: any) => {
   return `
     <a href="/todos/${x.id}/edit">
       <li class="hover:bg-gray-100">
@@ -10,7 +10,7 @@ const Item = x => {
   `
 }
 
-const todosAll = xs => {
+const todosAll = (xs: any) => {
   const content = `
     <a href="/todos/new">
       <button class="bg-blue-500 text-white px-8 py-2 rounded">
@@ -25,4 +25,4 @@ const todosAll = xs => {
   return baseHTML(content)
 }
 
-module.exports = { todosAll }
+export { todosAll }

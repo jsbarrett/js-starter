@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# split the window in half with a vertical line
+tmux split-window -h
+
+# split pane 1 (the new pane, the original is pane 0) in half with a horizontal line
+tmux split-window -v -t 1
+
+# open up vim in the original pane
+tmux send-keys "vim" C-m
+
+# turn on the server using nodemon
+tmux send-keys -t 2 'nodemon --exec "deno run --allow-read --allow-write --allow-net" index.ts' C-m
+
+# start the tests using nodemon.json
+tmux send-keys -t 1 'nodemon --exec "deno test --allow-read --allow-net" tests/index.js' C-m
